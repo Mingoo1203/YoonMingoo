@@ -1,0 +1,81 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Todo 목록</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="openAddModal()">
+        등록
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-refresher
+    slot="fixed"
+    (ionRefresh)="handleRefresh($event)">
+
+    <ion-refresher-content>
+    </ion-refresher-content>
+
+  </ion-refresher>
+  
+  <ion-list>
+    @for (todo of todos; track todo.id) {
+      <app-todo-item
+  [todo]="todo"
+  (delete)="confirmDelete($event)">
+</app-todo-item>
+    }
+  </ion-list>
+</ion-content>
+
+<!-- 등록 모달 -->
+<ion-modal
+  [isOpen]="isAddModalOpen"
+  (didDismiss)="closeAddModal()">
+
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Todo 등록</ion-title>
+
+        <ion-buttons slot="end">
+          <ion-button (click)="closeAddModal()">
+            닫기
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+<ion-content class="ion-padding">
+
+      <form [formGroup]="todoForm" (ngSubmit)="submitTodo()">
+
+        <ion-input
+          label="제목"
+          label-placement="stacked"
+          placeholder="제목을 입력하세요"
+          formControlName="title"
+          [maxlength]="20">
+        </ion-input>
+
+        <ion-textarea
+          label="내용"
+          label-placement="stacked"
+          placeholder="내용을 입력하세요"
+          formControlName="content"
+          [autoGrow]="true">
+        </ion-textarea>
+
+        <ion-button
+          expand="block"
+          type="submit"
+          [disabled]="todoForm.invalid">
+          등록하기
+        </ion-button>
+
+      </form>
+
+    </ion-content>
+  </ng-template>
+</ion-modal>
