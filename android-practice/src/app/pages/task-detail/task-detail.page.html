@@ -1,0 +1,315 @@
+
+<ion-header class="detail-header">
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-back-button
+        defaultHref="/home"
+        text="이전 목록">
+      </ion-back-button>
+    </ion-buttons>
+
+    <ion-title>상세 정보</ion-title>
+
+    <ion-buttons slot="end">
+
+<ion-button
+  id="task-menu-trigger"
+  (click)="isMenuOpen = true">
+  <ion-icon name="ellipsis-vertical"></ion-icon>
+</ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="detail-content">
+@if (task) {
+  <div class="detail-actions">
+
+    <ion-button
+      expand="block"
+      fill="outline"
+      (click)="copyContent()">
+      본문 복사
+    </ion-button>
+
+    <ion-button
+      expand="block"
+      [disabled]="task.status === 'DONE'"
+      (click)="completeTask()">
+      {{ task.status === 'DONE' ? '완료됨' : '완료 처리' }}
+    </ion-button>
+
+  </div>
+}
+  @if (task) {
+
+    <div class="detail-container">
+
+      <div class="detail-card">
+
+        <h1>{{ task.title }}</h1>
+
+        <div class="detail-meta">
+
+          <ion-badge
+            [color]="
+              task.status === 'DONE'
+                ? 'success'
+                : task.status === 'IN_PROGRESS'
+                  ? 'primary'
+                  : 'medium'
+            ">
+            {{
+              task.status === 'DONE'
+                ? '완료'
+                : task.status === 'IN_PROGRESS'
+                  ? '진행'
+                  : '대기'
+            }}
+          </ion-badge>
+
+          <div class="dates">
+            <p>
+              작성일:
+              {{ task.createDate | date:'yyyy.MM.dd HH:mm' }}
+            </p>
+
+            @if (task.updateDate) {
+              <p>
+                수정일:
+                {{ task.updateDate | date:'yyyy.MM.dd HH:mm' }}
+              </p>
+            }
+          </div>
+
+        </div>
+
+@if (task.photos.length > 0) {
+  <div class="photo-list">
+    @for (photo of task.photos; track $index) {
+      <img
+        [src]="photo"
+        alt="첨부 사진"
+        (click)="openPhotoViewer(photo)"
+        class="clickable-photo">
+    }
+  </div>
+}
+
+        <div class="detail-body">
+          {{ task.content }}
+        </div>
+
+      </div>
+
+    </div>
+
+  } @else {
+    <p class="empty-detail">
+      게시글을 찾을 수 없습니다.
+    </p>
+  }
+
+</ion-content>
+<ion-popover
+  trigger="task-menu-trigger"
+  [isOpen]="isMenuOpen"
+  (didDismiss)="isMenuOpen = false">
+
+  <ng-template>
+    <ion-list>
+
+      <ion-item
+        button
+        detail="false"
+        (click)="openEditModal()">
+        <ion-icon
+          name="create-outline"
+          slot="start">
+        </ion-icon>
+        수정
+      </ion-item>
+
+      <ion-item
+        button
+        detail="false"
+        (click)="openDeleteAlert()">
+        <ion-icon
+          name="trash-outline"
+          slot="start"
+          color="danger">
+        </ion-icon>
+        삭제
+      </ion-item>
+
+    </ion-list>
+  </ng-template>
+
+</ion-popover>
+
+<ion-modal
+  [isOpen]="isEditModalOpen"
+  (didDismiss)="closeEditModal()">
+
+  <ng-template>
+
+    <ion-header class="detail-header">
+      <ion-toolbar>
+
+        <ion-buttons slot="start">
+          <ion-button (click)="closeEditModal()">
+            취소
+          </ion-button>
+        </ion-buttons>
+
+        <ion-title>게시글 수정</ion-title>
+
+        <ion-buttons slot="end">
+          <ion-button
+            [disabled]="editForm.invalid"
+            (click)="submitEdit()">
+            저장
+          </ion-button>
+        </ion-buttons>
+
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="edit-content">
+
+      <form
+        [formGroup]="editForm"
+        class="edit-form">
+
+        <div class="edit-field">
+          <label>제목 (필수)</label>
+
+          <ion-input
+            fill="outline"
+            formControlName="title"
+            placeholder="제목을 입력하세요"
+            [maxlength]="200">
+          </ion-input>
+
+          <p>
+            {{ editForm.get('title')?.value?.length || 0 }}/200
+          </p>
+        </div>
+
+        <div class="edit-field">
+          <label>내용 (필수)</label>
+
+          <ion-textarea
+            fill="outline"
+            formControlName="content"
+            placeholder="내용을 입력하세요"
+            [maxlength]="400"
+            [rows]="8"
+            [autoGrow]="true">
+          </ion-textarea>
+
+          <p>
+            {{ editForm.get('content')?.value?.length || 0 }}/400
+          </p>
+        </div>
+
+<!-- 사진 첨부 영역 시작 -->
+
+<div class="edit-photo-section">
+  <p>사진 첨부 (선택)</p>
+
+  <div class="edit-photo-grid">
+
+    @for (photo of editPhotos; track $index) {
+      <div class="edit-photo-preview">
+        <img
+  [src]="photo"
+  alt="첨부 사진"
+  (click)="openPhotoViewer(photo)"
+  class="clickable-photo">
+
+        <button
+          type="button"
+          class="edit-photo-remove"
+          (click)="removeEditPhoto($index)">
+          ×
+        </button>
+      </div>
+    }
+
+@if (editPhotos.length < MAX_PHOTOS) {
+  <button
+    type="button"
+    class="edit-photo-add"
+    (click)="addEditPhoto()">
+
+    <ion-icon name="image-outline"></ion-icon>
+    <span>사진 추가</span>
+
+  </button>
+}
+
+  </div>
+
+  <p class="edit-photo-count">
+  첨부 사진 {{ editPhotos.length }} / {{ MAX_PHOTOS }}장
+</p>
+</div>
+
+
+
+
+<!-- 사진 첨부 영역 끝 -->
+
+      </form>
+
+    </ion-content>
+
+  </ng-template>
+</ion-modal>
+
+<ion-alert
+  [isOpen]="isDeleteAlertOpen"
+  header="게시글 삭제"
+  message="이 게시글을 삭제하시겠습니까?"
+  [buttons]="[
+    {
+      text: '취소',
+      role: 'cancel'
+    },
+    {
+      text: '삭제',
+      role: 'destructive',
+      handler: confirmDelete.bind(this)
+    }
+  ]"
+  (didDismiss)="isDeleteAlertOpen = false">
+</ion-alert>
+<!-- 사진 전체 화면 보기 -->
+<ion-modal
+  class="photo-viewer-modal"
+  [isOpen]="isPhotoViewerOpen"
+  (didDismiss)="closePhotoViewer()">
+
+  <ng-template>
+    <div class="photo-viewer">
+
+      <button
+        type="button"
+        class="photo-viewer-close"
+        (click)="closePhotoViewer()">
+        ✕
+      </button>
+
+      @if (selectedPhoto) {
+        <img
+          [src]="selectedPhoto"
+          alt="확대된 사진">
+      }
+
+    </div>
+  </ng-template>
+
+</ion-modal>

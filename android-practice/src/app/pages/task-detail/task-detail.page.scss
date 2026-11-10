@@ -1,0 +1,324 @@
+첨부
+.detail-header {
+  ion-toolbar {
+    --background: #17475d;
+    --color: white;
+    --min-height: 72px;
+  }
+
+  ion-title {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  ion-back-button,
+  ion-button {
+    --color: #69b7e6;
+  }
+}
+
+.detail-content {
+  --background: #092838;
+}
+
+.detail-container {
+  padding: 20px 16px 100px;
+}
+
+.detail-card {
+  background: #153e52;
+  border-radius: 16px;
+  padding: 22px;
+  color: white;
+
+  h1 {
+    font-size: 25px;
+    line-height: 1.4;
+    margin: 0 0 18px;
+  }
+}
+
+.detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+
+  ion-badge {
+    padding: 7px 12px;
+    border-radius: 20px;
+  }
+}
+
+.dates {
+  color: #8ca7b4;
+  font-size: 13px;
+
+  p {
+    margin: 4px 0;
+  }
+}
+
+.photo-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+
+  img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+}
+
+.detail-body {
+  font-size: 17px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.empty-detail {
+  color: #a7c0cd;
+  text-align: center;
+  margin-top: 80px;
+}
+
+.detail-actions {
+  position: fixed;
+  bottom: 24px;
+  left: 16px;
+  right: 16px;
+
+  display: flex;
+  gap: 12px;
+
+  ion-button {
+    flex: 1;
+    height: 52px;
+    font-size: 15px;
+    font-weight: 600;
+    --border-radius: 12px;
+  }
+
+  ion-button:first-child {
+    --color: #6fc4ed;
+    --border-color: #327da1;
+  }
+
+  ion-button:last-child {
+    --background: #1687b5;
+    --color: white;
+  }
+}
+
+.edit-photo-section {
+  margin-top: 24px;
+}
+
+.edit-photo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.edit-photo-preview {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #153e52;
+}
+
+.edit-photo-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.edit-photo-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 26px;
+  height: 26px;
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(0, 0, 0, 0.75);
+  color: #ffffff;
+
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.edit-photo-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+  padding: 0;
+
+  border: 1px dashed #3788b4;
+  border-radius: 12px;
+
+  background: #153e52;
+  color: #69b7e6;
+  cursor: pointer;
+}
+
+.edit-photo-add ion-icon {
+  font-size: 28px;
+}
+
+.edit-photo-add span {
+  font-size: 12px;
+}
+
+.edit-photo-count {
+  margin-top: 12px;
+  color: #8ca7b4;
+  font-size: 13px;
+}
+/* 사진 첨부 영역 테스트 */
+.edit-photo-section {
+  padding: 16px !important;
+  background: #12384b !important;
+  border-radius: 12px;
+}
+
+.edit-photo-grid {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.edit-photo-add {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  width: 90px !important;
+  height: 90px !important;
+  padding: 0 !important;
+
+  border: 1px dashed #69b7e6 !important;
+  border-radius: 12px !important;
+  background: #153e52 !important;
+  color: #69b7e6 !important;
+
+  cursor: pointer;
+}
+
+.edit-photo-add ion-icon {
+  font-size: 28px;
+}
+
+.edit-photo-preview {
+  position: relative;
+  width: 90px !important;
+  height: 90px !important;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.edit-photo-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.edit-photo-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 10;
+
+  width: 26px !important;
+  height: 26px !important;
+  padding: 0 !important;
+
+  border: none;
+  border-radius: 50%;
+  background: #222 !important;
+  color: white !important;
+  font-size: 20px;
+  cursor: pointer;
+}
+/* 사진 클릭 가능 */
+.clickable-photo {
+  cursor: zoom-in;
+}
+
+/* 전체 화면 사진 모달 */
+ion-modal.photo-viewer-modal {
+  --width: 100%;
+  --height: 100%;
+  --max-width: 100%;
+  --max-height: 100%;
+  --border-radius: 0;
+  --background: #000;
+}
+
+/* 사진 확대 화면 */
+.photo-viewer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.photo-viewer img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* 닫기 버튼 */
+.photo-viewer-close {
+  position: absolute;
+  top: calc(20px + env(safe-area-inset-top));
+  right: 20px;
+  z-index: 10;
+
+  width: 42px;
+  height: 42px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 22px;
+
+  cursor: pointer;
+}

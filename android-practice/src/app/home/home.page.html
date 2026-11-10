@@ -1,0 +1,281 @@
+
+<ion-header class="app-header">
+  <ion-toolbar>
+
+    @if (!isSearching) {
+      <ion-title>작업 목록</ion-title>
+
+      <ion-buttons slot="end">
+        <ion-button (click)="isSearching = true">
+          <ion-icon name="search-outline"></ion-icon>
+        </ion-button>
+
+        <ion-button (click)="toggleSort()">
+          <ion-icon name="filter-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    } @else {
+      <ion-searchbar
+        placeholder="검색"
+        [value]="searchText"
+        (ionInput)="searchText = $any($event).detail.value || ''">
+      </ion-searchbar>
+
+      <ion-buttons slot="end">
+        <ion-button
+          (click)="isSearching = false; searchText = ''">
+          취소
+        </ion-button>
+      </ion-buttons>
+    }
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="task-content">
+@if (isOffline) {
+  <div class="offline-banner">
+    <ion-icon name="cloud-offline-outline"></ion-icon>
+    <span>
+      인터넷에 연결되어 있지 않습니다.
+    </span>
+  </div>
+}
+  <ion-refresher slot="fixed"
+                 (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="task-container">
+
+    @if (errorMessage) {
+      <p class="empty-message">{{ errorMessage }}</p>
+    }
+
+@for (task of filteredTasks; track task.id) {
+
+  <ion-item-sliding #slidingItem>
+
+    <ion-item
+      lines="none"
+      class="task-sliding-item">
+
+      <div
+        class="task-card"
+        (click)="openDetail(task)">
+
+        <div class="task-top">
+          <h2>{{ task.title }}</h2>
+
+          <ion-badge
+            [color]="
+              task.status === 'DONE'
+                ? 'success'
+                : task.status === 'IN_PROGRESS'
+                  ? 'primary'
+                  : 'medium'
+            ">
+            {{
+              task.status === 'DONE'
+                ? '완료'
+                : task.status === 'IN_PROGRESS'
+                  ? '진행'
+                  : '대기'
+            }}
+          </ion-badge>
+        </div>
+
+        <div class="task-body">
+          <p>{{ task.content }}</p>
+
+          @if (task.photos.length > 0) {
+            <ion-icon
+              name="image-outline"
+              class="image-icon">
+            </ion-icon>
+          }
+        </div>
+
+        <div class="task-date">
+          {{
+            (task.updateDate || task.createDate)
+              | date:'yyyy.MM.dd HH:mm'
+          }}
+        </div>
+
+      </div>
+
+    </ion-item>
+
+    <ion-item-options side="end">
+
+      <ion-item-option
+        color="danger"
+        (click)="confirmSwipeDelete(task, slidingItem)">
+
+        <ion-icon
+          slot="top"
+          name="trash-outline">
+        </ion-icon>
+
+        삭제
+
+      </ion-item-option>
+
+    </ion-item-options>
+
+  </ion-item-sliding>
+
+} @empty {
+  @if (!errorMessage) {
+    <p class="empty-message">
+      등록된 데이터가 없습니다.
+    </p>
+  }
+}
+
+
+  </div>
+
+  <ion-fab slot="fixed"
+           vertical="bottom"
+           horizontal="end">
+    <ion-fab-button (click)="openAddModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>
+<ion-modal
+  [isOpen]="isAddModalOpen"
+  (didDismiss)="closeAddModal()">
+
+  <ng-template>
+
+    <ion-header class="app-header">
+      <ion-toolbar>
+
+        <ion-buttons slot="start">
+          <ion-button (click)="closeAddModal()">
+            취소
+          </ion-button>
+        </ion-buttons>
+
+        <ion-title>게시글 작성</ion-title>
+
+        <ion-buttons slot="end">
+          <ion-button
+            [disabled]="taskForm.invalid"(click)="submitTask()">
+            등록
+          </ion-button>
+        </ion-buttons>
+
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="form-content">
+
+      <form [formGroup]="taskForm" class="task-form">
+
+        <div class="form-field">
+          <div class="field-heading">
+            <label>제목</label>
+            <span>(필수)</span>
+          </div>
+
+          <ion-input
+            fill="outline"
+            placeholder="제목을 적어주세요."
+            formControlName="title"
+            [maxlength]="200">
+          </ion-input>
+
+          <div class="field-footer">
+            <span>
+              {{ taskForm.get('title')?.valid
+                 ? '✓ 제목 필수값 만족'
+                 : '제목은 필수 입력 항목입니다.' }}
+            </span>
+            <span>
+              {{ taskForm.get('title')?.value?.length || 0 }}/200
+            </span>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <div class="field-heading">
+            <label>내용</label>
+            <span>(필수)</span>
+          </div>
+
+          <ion-textarea
+            fill="outline"
+            placeholder="내용을 입력해주세요."
+            formControlName="content"
+            [maxlength]="400"
+            [autoGrow]="true"
+            [rows]="8">
+          </ion-textarea>
+
+          <div class="field-footer">
+            <span>
+              {{ taskForm.get('content')?.valid
+                 ? '✓ 내용 필수값 만족'
+                 : '내용은 필수 입력 항목입니다.' }}
+            </span>
+            <span>
+              {{ taskForm.get('content')?.value?.length || 0 }}/400
+            </span>
+          </div>
+        </div>
+
+        <div class="photo-section">
+  <p>사진 첨부 <span>(선택)</span></p>
+
+  <div class="photo-grid">
+
+    @for (photo of selectedPhotos; track $index) {
+      <div class="photo-preview">
+        <img [src]="photo" alt="첨부 사진">
+
+        <button
+          type="button"
+          class="photo-remove"
+          (click)="removePhoto($index)">
+          ×
+        </button>
+      </div>
+    }
+
+@if (selectedPhotos.length < MAX_PHOTOS) {
+  <button
+    type="button"
+    class="photo-add"
+    (click)="addPhoto()">
+    <ion-icon name="image-outline"></ion-icon>
+    <span>사진 추가</span>
+  </button>
+}
+  </div>
+   <p class="photo-count">
+    첨부 사진 {{ selectedPhotos.length }} / {{ MAX_PHOTOS }}장
+  </p>
+
+</div>
+
+        <p class="form-summary"
+           [class.valid]="taskForm.valid">
+          {{
+            taskForm.valid
+              ? '✓ 모든 필수 입력이 완료되었습니다.'
+              : '⚠ 필수 입력을 완료해주세요.'
+          }}
+        </p>
+
+      </form>
+
+    </ion-content>
+
+  </ng-template>
+
+</ion-modal>

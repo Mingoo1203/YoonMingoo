@@ -1,0 +1,7 @@
+{
+  "name": "android-practice",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
