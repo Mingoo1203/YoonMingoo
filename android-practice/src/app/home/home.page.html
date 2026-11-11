@@ -127,7 +127,11 @@
   </ion-item-sliding>
 
 } @empty {
-  @if (!errorMessage) {
+  @if (isLoading) {
+    <p class="empty-message">
+      게시글을 불러오는 중입니다...
+    </p>
+  } @else if (!errorMessage) {
     <p class="empty-message">
       등록된 데이터가 없습니다.
     </p>

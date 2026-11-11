@@ -88,6 +88,7 @@ import { Task } from '../model/task.model';
 export class HomePage implements OnInit, OnDestroy {
 
   tasks: Task[] = [];
+  isLoading = true;
   searchText = '';
   isSearching = false;
   sortAscending = true;
@@ -131,24 +132,37 @@ async ngOnInit(): Promise<void> {
     this.initializeNetwork()
   ]);
 }
-async loadTasks(): Promise<void> {
-  try {
-    this.errorMessage = '';
 
+async loadTasks(): Promise<void> {
+  this.ngZone.run(() => {
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.cdr.detectChanges();
+  });
+
+  try {
     await this.taskService.getInitialTasks();
 
-    // 서비스에 저장된 최신 목록 가져오기
-    this.tasks = [...this.taskService.getTasks()];
-
-    // 화면 즉시 갱신
-    this.cdr.detectChanges();
+    this.ngZone.run(() => {
+      this.tasks = [...this.taskService.getTasks()];
+      this.cdr.detectChanges();
+    });
 
     console.log('불러온 게시글:', this.tasks);
 
   } catch (error) {
     console.error('게시글 불러오기 실패:', error);
-    this.errorMessage = '데이터를 불러오지 못했습니다.';
-    this.cdr.detectChanges();
+
+    this.ngZone.run(() => {
+      this.errorMessage = '데이터를 불러오지 못했습니다.';
+      this.cdr.detectChanges();
+    });
+
+  } finally {
+    this.ngZone.run(() => {
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    });
   }
 }
 
@@ -403,8 +417,10 @@ removePhoto(index: number): void {
 }
 
 ionViewWillEnter(): void {
-  this.tasks = [...this.taskService.getTasks()];
-  this.cdr.detectChanges();
+  this.ngZone.run(() => {
+    this.tasks = [...this.taskService.getTasks()];
+    this.cdr.detectChanges();
+  });
 }
 
 async initializeNetwork(): Promise<void> {
